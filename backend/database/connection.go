@@ -21,3 +21,12 @@ func Connect() (*gorm.DB, error) {
 	}
 	return DB, nil
 }
+func Close(db *gorm.DB) {
+	if db != nil {
+		sqlDB, _ := db.DB() // Assign both values returned by db.DB()
+
+		if err := sqlDB.Close(); err != nil {
+			log.Printf("Error closing database connection: %v", err)
+		}
+	}
+}

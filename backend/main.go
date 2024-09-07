@@ -34,6 +34,7 @@ func main() {
 	if err != nil {
 		log.Fatalf("Error connecting to the database: %v", err)
 	}
+	defer database.Close(db)
 
 	r.HandleFunc("/register", func(w http.ResponseWriter, r *http.Request) {
 		handlers.Register(db, w, r)
