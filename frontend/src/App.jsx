@@ -31,7 +31,13 @@ function App() {
         </div>
         <ul>
           {tweets.map((tweet, index)=>{
-            <li key={index}>{tweet.content}</li>
+            <li key={index}>{tweet.content}
+            
+            
+            
+            
+            
+            </li>
           })}
         </ul>
 
