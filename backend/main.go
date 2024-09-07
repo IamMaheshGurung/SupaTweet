@@ -8,49 +8,12 @@ import (
 	"os/signal"
 	"time"
 
-	"SupaTweet-backend/database"
-	"SupaTweet-backend/handlers"
-
 	"github.com/gorilla/mux"
-	"gorm.io/gorm"
 )
-
-type Tweet struct {
-	ID      uint   `gorm:"primary_key"`
-	Content string `gorm:"type:text"`
-	UserID  uint
-}
-
-func Migrate(db *gorm.DB) error {
-	return db.AutoMigrate(&Tweet{})
-}
 
 func main() {
 	// Initialize the router
 	r := mux.NewRouter()
-
-	// Connect to the database
-	db, err := database.Connect()
-	if err != nil {
-		log.Fatalf("Error connecting to the database: %v", err)
-	}
-	defer database.Close(db)
-
-	r.HandleFunc("/register", func(w http.ResponseWriter, r *http.Request) {
-		handlers.Register(db, w, r)
-	}).Methods("POST")
-
-	r.HandleFunc("/login", func(w http.ResponseWriter, r *http.Request) {
-		handlers.Login(db, w, r)
-	}).Methods("POST")
-
-	r.HandleFunc("/tweet", func(w http.ResponseWriter, r *http.Request) {
-		handlers.PostTweet(db, w, r)
-	}).Methods("POST")
-
-	r.HandleFunc("/tweets", func(w http.ResponseWriter, r *http.Request) {
-		handlers.GetTweets(db, w, r)
-	}).Methods("GET")
 
 	// Configure the HTTP server
 	srv := &http.Server{
@@ -72,7 +35,7 @@ func main() {
 	// Graceful shutdown
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt)
-
+	signal.Notify(stop, os.Kill)
 	<-stop
 
 	log.Println("Shutting down server...")
