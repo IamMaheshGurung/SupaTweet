@@ -12,7 +12,18 @@ import (
 	"SupaTweet-backend/handlers"
 
 	"github.com/gorilla/mux"
+	"gorm.io/gorm"
 )
+
+type Tweet struct {
+	ID      uint   `gorm:"primary_key"`
+	Content string `gorm:"type:text"`
+	UserID  uint
+}
+
+func Migrate(db *gorm.DB) error {
+	return db.AutoMigrate(&Tweet{})
+}
 
 func main() {
 	// Initialize the router
