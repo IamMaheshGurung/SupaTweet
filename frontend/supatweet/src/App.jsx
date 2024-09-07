@@ -1,5 +1,5 @@
-import { useState } from "react";
-import React from React;
+import React, { useState } from "react";
+
 
 
 import axios from "axios"
@@ -29,7 +29,7 @@ function App() {
             <h1>SupaTweet</h1>
             <div>
                 <input type="text" value={content} onChange={(e)=> setContent(e.target.value)}/>
-                <button onClick={postTweet}>Post Tweet</button>
+                <button onClick={postTWeet}>Post Tweet</button>
             </div>
             <ul>
                 {tweets.map((tweet, index)=>(<li key={index}>{tweet.content}</li>))}
