@@ -1,6 +1,7 @@
 package main
 
 import (
+	"SupaTweet-backend/handlers"
 	"context"
 	"log"
 	"net/http"
@@ -9,23 +10,41 @@ import (
 	"time"
 
 	"github.com/gorilla/mux"
+	"github.com/rs/cors"
 )
 
 func main() {
-	// Initialize the router
-	r := mux.NewRouter()
 
 	// Configure the HTTP server
-	srv := &http.Server{
-		Handler:      r,
-		Addr:         ":8080",
-		WriteTimeout: 15 * time.Second,
-		ReadTimeout:  15 * time.Second,
-		IdleTimeout:  60 * time.Second,
-	}
 
 	// Start the server in a goroutine
+	var srv *http.Server
+
 	go func() {
+		l := log.New(os.Stdout, "tweet-api", log.LstdFlags)
+		ts := handlers.NewTweet(l)
+
+		// Initialize the router
+		r := mux.NewRouter()
+
+		r.HandleFunc("/tweet", ts.PostTweet).Methods(http.MethodPost)
+		r.HandleFunc("/tweets", ts.GetTweets).Methods(http.MethodGet)
+
+		c := cors.New(cors.Options{
+			AllowedOrigins:   []string{"*"},
+			AllowedMethods:   []string{http.MethodGet, http.MethodPost},
+			AllowedHeaders:   []string{"Content-Type"}, // Corrected field name
+			AllowCredentials: true,
+		})
+
+		srv = &http.Server{
+			Handler:      c.Handler(r),
+			Addr:         ":8080",
+			WriteTimeout: 15 * time.Second,
+			ReadTimeout:  15 * time.Second,
+			IdleTimeout:  60 * time.Second,
+		}
+
 		log.Println("Starting server on :8080")
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
 			log.Fatalf("Error starting server: %v", err)
