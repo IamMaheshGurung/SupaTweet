@@ -7,18 +7,21 @@ function App() {
   const [tweets, setTweets] = useState([]);
   const [content, setContent] = useState("");
   useEffect(()=>{
-    axios.get("http://localhost:8080/tweets").then((response) =>
+    axios.get("http://localhost:8080/tweet").then((response) =>
     {
       setTweets(response.data);
     });
   },[])
 
   const postTweet = () => {
-    axios.post("http://localhost:8080/tweet", {content})
+    axios.post("http://localhost:8080/tweets", {content})
     .then((response)=> {
       setTweets([...tweets, response.data]);
       setContent("")
     })
+    .catch((error) => {
+      console.error("There was an error posting the tweet!", error);
+    });
   }
 
   return (
@@ -32,10 +35,7 @@ function App() {
         <ul>
           {tweets.map((tweet, index)=>{
             <li key={index}>{tweet.content}
-            
-            
-            
-            
+
             
             </li>
           })}
